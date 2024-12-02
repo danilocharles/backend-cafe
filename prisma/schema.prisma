@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Carrinho {
+  id           Int            @id @unique(map: "sqlite_autoindex_Carrinho_1") @default(autoincrement())
+  id_usuario   Int
+  Usuario      Usuario        @relation(fields: [id_usuario], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  ItemCarrinho ItemCarrinho[] 
+}
+
+model Item {
+  id           Int            @id @unique(map: "sqlite_autoindex_Item_1") @default(autoincrement())
+  nome         String
+  preco        Float
+  descricao    String
+  ItemCarrinho ItemCarrinho[]
+  ItemPedido   ItemPedido[]  
+}
+
+model ItemCarrinho {
+  id          Int     @id @unique(map: "sqlite_autoindex_ItemCarrinho_1") @default(autoincrement())
+  id_carrinho Int
+  id_item     Int
+  quantidade  Int
+  Item        Item     @relation(fields: [id_item], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  Carrinho    Carrinho @relation(fields: [id_carrinho], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+}
+
+model ItemPedido {
+  id          Int     @id @unique(map: "sqlite_autoindex_ItemPedido_1") @default(autoincrement())
+  id_pedido  Int
+  id_item    Int
+  quantidade Int 
+  Item       Item   @relation(fields: [id_item], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  Pedido     Pedido @relation(fields: [id_pedido], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model Pedido {
+  id           Int          @id @unique(map: "sqlite_autoindex_Pedido_1") @default(autoincrement())
+  id_cliente   Int
+  data         Float
+  data_termino Float?
+  status       String
+  ItemPedido   ItemPedido[] 
+  Usuario      Usuario      @relation(fields: [id_cliente], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model Usuario {
+  id       Int        @id @unique(map: "sqlite_autoindex_Usuario_1") @default(autoincrement())
+  nome     String
+  email    String @unique 
+  senha    String
+  cpf      Float @unique
+  Carrinho Carrinho[]
+  Pedido   Pedido[]
+}
